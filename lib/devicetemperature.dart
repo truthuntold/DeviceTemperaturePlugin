@@ -11,8 +11,8 @@ class Devicetemperature {
   static const MethodChannel _channel =
       const MethodChannel('devicetemperature');
 
-  static Future<double> get DeviceTemperature async {
-    final double temperature = await _channel.invokeMethod('getDeviceTemperature');
+  static Future<double?> get DeviceTemperature async {
+    final double? temperature = await _channel.invokeMethod('getDeviceTemperature');
     return temperature;
   }
 }

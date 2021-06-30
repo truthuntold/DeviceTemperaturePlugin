@@ -27,29 +27,15 @@ public class DevicetemperaturePlugin implements FlutterPlugin, MethodCallHandler
   /// when the Flutter Engine is detached from the Activity
   private MethodChannel channel;
   private Activity activity;
-  private double batteryTemperature = 5.0;
+  private double batteryTemperature = 0;
   int batterLevel;
   boolean check = false;
   private BroadcastReceiver broadcastreceiver;
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-    channel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "devicetemperature");
+    channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "devicetemperature");
     channel.setMethodCallHandler(this);
-  }
-
-  // This static function is optional and equivalent to onAttachedToEngine. It supports the old
-  // pre-Flutter-1.12 Android projects. You are encouraged to continue supporting
-  // plugin registration via this function while apps migrate to use the new Android APIs
-  // post-flutter-1.12 via https://flutter.dev/go/android-project-migration.
-  //
-  // It is encouraged to share logic between onAttachedToEngine and registerWith to keep
-  // them functionally equivalent. Only one of onAttachedToEngine or registerWith will be called
-  // depending on the user's project. onAttachedToEngine or registerWith must both be defined
-  // in the same class.
-  public static void registerWith(Registrar registrar) {
-    final MethodChannel channel = new MethodChannel(registrar.messenger(), "devicetemperature");
-    channel.setMethodCallHandler(new DevicetemperaturePlugin());
   }
 
 
@@ -57,15 +43,15 @@ public class DevicetemperaturePlugin implements FlutterPlugin, MethodCallHandler
   public void onMethodCall(@NonNull MethodCall call, @NonNull final Result result) {
     if(call.method.equals("getDeviceTemperature")) {
      // deviceSense = senseManage.getDefaultSensor(Sensor.TYPE_TEMPERATURE);
-       broadcastreceiver = new BroadcastReceiver() {
+      broadcastreceiver = new BroadcastReceiver() {
         @TargetApi(Build.VERSION_CODES.HONEYCOMB)
         @Override
         public void onReceive(Context context, Intent intent) {
           batteryTemperature = (double)(intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0))/10;
-          result.success(batteryTemperature);
-          activity.unregisterReceiver(broadcastreceiver);
         }
       };
+      result.success(batteryTemperature);
+
       IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
       activity.registerReceiver(broadcastreceiver, intentFilter);
     }
