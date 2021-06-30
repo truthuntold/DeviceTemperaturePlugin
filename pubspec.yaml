@@ -1,6 +1,6 @@
 name: devicetemperature
 description: Flutter plugin to get the temperature of the device
-version: 0.0.1
+version: 0.0.2
 author: Ritika Garg ritikagg3@gmail.com
 homepage: https://github.com/ritika-11/DeviceTemperaturePlugin
 
